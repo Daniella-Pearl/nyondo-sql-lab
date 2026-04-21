@@ -45,3 +45,58 @@ INSERT INTO products (name, description, price) VALUES (?, ?, ?);
   { id: 5, name: 'Timber 2x4', description: 'Pine timber plank 2x4 per metre', price: 25000 }
 ]
 
+
+//Test 2
+1.Get every column of every product
+SQL: SELECT * FROM products;
+[
+  { id: 1, name: 'Cement (bag)', description: 'Portland cement 50kg bag', price: 35000 },
+  { id: 2, name: 'Iron Sheet 3m', description: 'Gauge 30 roofing sheet 3m long', price: 110000 },
+  { id: 3, name: 'Paint 5L', description: 'Exterior wall paint white 5L', price: 60000 },
+  { id: 4, name: 'Nails 1kg', description: 'Common wire nails 1kg pack', price: 12000 },
+  { id: 5, name: 'Timber 2x4', description: 'Pine timber plank 2x4 per metre', price: 25000 }
+]
+
+2.Get only the name and price of all products
+SQL: SELECT name, price FROM products;
+[
+  { name: 'Cement (bag)', price: 35000 },
+  { name: 'Iron Sheet 3m', price: 110000 },
+  { name: 'Paint 5L', price: 60000 },
+  { name: 'Nails 1kg', price: 12000 },
+  { name: 'Timber 2x4', price: 25000 }
+]
+
+3.Get full details of the product with id = 3
+SQL: SELECT * FROM products WHERE id = 3;
+{ id: 3, name: 'Paint 5L', description: 'Exterior wall paint white 5L', price: 60000 }
+
+4.Find all products whose name contains 'sheet'
+SQL: SELECT * FROM products WHERE name LIKE '%sheet%';
+[ { id: 2, name: 'Iron Sheet 3m', description: 'Gauge 30 roofing sheet 3m long', price: 110000 } ]
+
+
+5.Get all products sorted by price, highest first
+SQL: SELECT * FROM products ORDER BY price DESC;
+[
+  { id: 2, name: 'Iron Sheet 3m', price: 110000 ... },
+  { id: 3, name: 'Paint 5L', price: 60000 ... },
+  { id: 1, name: 'Cement (bag)', price: 35000 ... },
+  { id: 5, name: 'Timber 2x4', price: 25000 ... },
+  { id: 4, name: 'Nails 1kg', price: 12000 ... }
+]
+
+
+6.Get only the 2 most expensive products
+SQL: SELECT * FROM products ORDER BY price DESC LIMIT 2;
+[
+  { id: 2, name: 'Iron Sheet 3m', price: 110000 ... },
+  { id: 3, name: 'Paint 5L', price: 60000 ... }
+]
+
+
+7.Update the price of Cement (id=1) to 38,000
+SQL: UPDATE products SET price = 38000 WHERE id = 1;
+Confirmation Output (SELECT * FROM products WHERE id = 1):
+{ id: 1, name: 'Cement (bag)', description: 'Portland cement 50kg bag', price: 38000 }
+
