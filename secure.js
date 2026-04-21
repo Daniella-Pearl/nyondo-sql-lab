@@ -1,23 +1,39 @@
 const Database = require('better-sqlite3');
 const db = new Database('nyondo_stock.db');
 
-// SECURE: Use the ? placeholder to safely inject the search term
 function searchProductSafe(name) {
+    // VALIDATION: String check, length >= 2, and illegal characters < > ;
+    if (typeof name !== 'string' || name.length < 2 || /[<>;]/.test(name)) {
+        console.log(`REJECTED: Invalid search term "${name}"`);
+        return [];
+    }
+
     const query = `SELECT * FROM products WHERE name LIKE ?`;
-    const rows = db.prepare(query).all(`%${name}%`);
-    return rows;
+    return db.prepare(query).all(`%${name}%`);
 }
 
-// SECURE: Use two ? placeholders for username and password
 function loginSafe(username, password) {
+    // VALIDATION: No spaces, not empty, password >= 6 chars
+    if (!username || typeof username !== 'string' || username.includes(' ')) {
+        console.log(`REJECTED: Invalid username format "${username}"`);
+        return undefined;
+    }
+    if (!password || typeof password !== 'string' || password.length < 6) {
+        console.log(`REJECTED: Password too short`);
+        return undefined;
+    }
+
     const query = `SELECT * FROM users WHERE username = ? AND password = ?`;
-    const row = db.prepare(query).get(username, password);
-    return row;
+    return db.prepare(query).get(username, password);
 }
 
-// These will now ALL return [] or undefined because the input is no longer executed as code
-console.log('--- Running Security Tests ---');
-console.log('Test 1 (Bypass Search):', searchProductSafe("' OR 1=1--"));
-console.log('Test 2 (Union Attack): ', searchProductSafe("' UNION SELECT id,username,password,role FROM users--"));
-console.log('Test 3 (Admin Bypass): ', loginSafe("admin'--", 'anything'));
-console.log('Test 4 (Always True):  ', loginSafe("' OR '1'='1", "' OR '1'='1"));
+// --- TEST CASES ---
+console.log('--- TESTING VALIDATION ---');
+
+console.log('Test A:', searchProductSafe('cement'));       // Expected: Works
+console.log('Test B:', searchProductSafe(''));             // Expected: Rejected (too short)
+console.log('Test C:', searchProductSafe('<script>'));     // Expected: Rejected (illegal chars)
+
+console.log('Test D:', loginSafe('admin', 'admin123'));    // Expected: Works
+console.log('Test E:', loginSafe('admin', 'ab'));          // Expected: Rejected (too short)
+console.log('Test F:', loginSafe('ad min', 'pass123'));    // Expected: Rejected (space)
