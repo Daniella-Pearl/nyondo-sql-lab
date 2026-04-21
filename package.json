@@ -1,0 +1,23 @@
+{
+  "name": "nyondo-sql-lab",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Daniella-Pearl/nyondo-sql-lab#readme",
+  "bugs": {
+    "url": "https://github.com/Daniella-Pearl/nyondo-sql-lab/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Daniella-Pearl/nyondo-sql-lab.git"
+  },
+  "license": "ISC",
+  "author": "Pearl Daniella",
+  "type": "commonjs",
+  "main": "setup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0"
+  }
+}
