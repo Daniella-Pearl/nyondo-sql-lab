@@ -147,3 +147,40 @@ INSERT INTO products (name, description, price) VALUES (?, ?, ?);
   { id: 4, name: 'Nails 1kg', description: 'Common wire nails 1kg pack', price: 12000 },
   { id: 5, name: 'Timber 2x4', description: 'Pine timber plank 2x4 per metre', price: 25000 }
 ]
+
+
+//TASK 4
+Using `?` placeholders prevents injection by separating the **SQL command** from the **user data** before the database processes them. In a template literal, the database treats everything as one long instruction, allowing malicious input to "break out" and act as a new command. With parameterized queries, the database pre-compiles the query structure first; it then treats the user input strictly as a literal value, ensuring that even a hack like `' OR 1=1` is handled as harmless text instead of executable code.
+
+1. Full secure.js Code
+JavaScript
+const Database = require('better-sqlite3');
+const db = new Database('nyondo_stock.db');
+
+function searchProductSafe(name) {
+    const query = `SELECT * FROM products WHERE name LIKE ?`;
+    return db.prepare(query).all(`%${name}%`);
+}
+
+function loginSafe(username, password) {
+    const query = `SELECT * FROM users WHERE username = ? AND password = ?`;
+    return db.prepare(query).get(username, password);
+}
+
+// Security Tests
+console.log('Test 1 (Search Bypass):', searchProductSafe("' OR 1=1--"));
+console.log('Test 2 (UNION Attack): ', searchProductSafe("' UNION SELECT id,username,password,role FROM users--"));
+console.log('Test 3 (Admin Bypass): ', loginSafe("admin'--", 'anything'));
+console.log('Test 4 (Always True):  ', loginSafe("' OR '1'='1", "' OR '1'='1"));
+
+2. Terminal Output
+When you run node secure.js, your output should look like this:
+Test 1 (Search Bypass): []
+Test 2 (UNION Attack):  []
+Test 3 (Admin Bypass):  undefined
+Test 4 (Always True):   undefined
+
+3. Explanation Paragraph
+Using ? placeholders prevents injection by separating the SQL command from the user data before the database processes them. In a template literal, the database treats everything as one long instruction, allowing malicious input to "break out" and act as a new command. With parameterized queries, the database pre-compiles the query structure first; it then treats the user input strictly as a literal value, ensuring that even a hack like ' OR 1=1 is handled as harmless text instead of executable code.
+
+
