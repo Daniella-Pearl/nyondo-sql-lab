@@ -1,3 +1,5 @@
+Nassuuna Pearl Daniella
+
 1.full setup.js code 
 const Database = require('better-sqlite3');
 const db = new Database('nyondo_stock.db');
